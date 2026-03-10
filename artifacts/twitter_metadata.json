@@ -6,6 +6,24 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "_newLength",
+						"type": "uint16"
+					}
+				],
+				"name": "changeTweetLength",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -41,7 +59,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "owner",
+						"name": "_owner",
 						"type": "address"
 					}
 				],
@@ -60,7 +78,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "owner",
+						"name": "_owner",
 						"type": "address"
 					},
 					{
@@ -84,7 +102,36 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "owner",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "hasLiked",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
 						"type": "address"
 					},
 					{
@@ -117,6 +164,11 @@
 						"internalType": "uint256",
 						"name": "id",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "author",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
@@ -166,11 +218,11 @@
 	},
 	"sources": {
 		"Twitter_dApp/contracts/twitter.sol": {
-			"keccak256": "0xe7a31cf459320e5dcdeb3370c25d396598025929b5a84b8af019f7dc891433c0",
+			"keccak256": "0xd006bb0176ef09effa24820285eff592b6f97ada955d0f37131b3c0cee9a8238",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://26eaa41f8162ba8f90477a497c061d58be8869abcec9135bb3db1e737d3e3976",
-				"dweb:/ipfs/QmRaWd8CEHcfEduBhx67Q9c63cD9rVCPgVPhMgX7M9mRFz"
+				"bzz-raw://dcb8d357186b76fb24d173dde902f204ddc352ff4a4731f6dd8faa96a2b94a0d",
+				"dweb:/ipfs/QmW2PUDzWZQD32JstkBKY2ZC5AhTbQtf9ndjTb9MbL1LEc"
 			]
 		}
 	},

@@ -9,10 +9,19 @@ pragma solidity ^0.8.0;
 
 contract twitter{
 
+    uint16 maxTweetLength;
+    address admin ;
+
+    constructor(){
+        admin = msg.sender;
+        maxTweetLength = 280;
+    }
+
     //uint public tweetId;
 
     struct Tweet{
         uint id;
+        address author;
         uint timestamp;
         uint likes;
         string content;
@@ -23,11 +32,28 @@ contract twitter{
     //removed the tweetid global var, to make it address specific
     mapping(address => uint) public counter;
     mapping(address => mapping(uint => Tweet)) public tweets;
+    mapping(address => mapping(uint => mapping(address => bool))) public hasLiked ;
+    
+    modifier onlyAdmin(){
+        require(admin == msg.sender, "You are not the admin");
+        _;
+    }
 
-    function createTweet(string memory _tweet) public{
+    modifier onlyAuthor(address _owner) {
+        require(msg.sender == _owner, "You are not the message author");
+        _;
+    }
+
+    function changeTweetLength(uint16 _newLength) public onlyAdmin() {
+        maxTweetLength = _newLength;
+    }
+    function createTweet(string memory _tweet) external{
+        require(bytes(_tweet).length > 0, "Error - Invalid Length");
+        require(bytes(_tweet).length <= maxTweetLength, "Error - Tweet too Long");
         uint _id = counter[msg.sender] ;
         tweets[msg.sender][_id] = Tweet({
             id : _id,
+            author : msg.sender,
             timestamp : block.timestamp,
             likes : 0,
             content : _tweet
@@ -35,23 +61,26 @@ contract twitter{
         counter[msg.sender]++;
     }
 
-    function getTweet(address owner, uint _id) public view returns(string memory){
-        return tweets[owner][_id].content;
+    function getTweet(address _owner, uint _id) external onlyAuthor(_owner) view returns(string memory){
+        return tweets[_owner][_id].content;
     }
 
-    function getAllTweets(address owner) public view returns(string[] memory){
-        uint _length = counter[owner];
+    function getAllTweets(address _owner) external onlyAuthor(_owner) view returns(string[] memory){
+        uint _length = counter[_owner];
         //In solidity uninitalised memory arrays should be given a fixed size hence its not working 
         //string[] memory allTweets ;
         string[] memory allTweets = new string[](_length);
         for(uint i = 0; i < _length; i++){
-            allTweets[i] = tweets[owner][i].content;
+            allTweets[i] = tweets[_owner][i].content;
         }
         return allTweets;
     }
 
-    function likeTweet(address owner, uint _id) public {
-        tweets[owner][_id].likes ++;
+    function likeTweet(address _owner, uint _id) external {
+        require(_id < counter[_owner], "Error - no id found");
+        require(hasLiked[_owner][_id][msg.sender] == false, "Already Liked");
+        tweets[_owner][_id].likes ++;
+        hasLiked[_owner][_id][msg.sender] = true ;
     }
 
     // mapping(address => mapping(uint => string)) public tweets;
