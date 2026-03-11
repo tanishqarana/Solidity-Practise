@@ -33,7 +33,11 @@ contract twitter{
     mapping(address => uint) public counter;
     mapping(address => mapping(uint => Tweet)) public tweets;
     mapping(address => mapping(uint => mapping(address => bool))) public hasLiked ;
-    
+
+    event tweetCreated(uint _id, address _author, uint _timestamp, string _content);
+    event tweetLiked(uint _id, address _author, uint _timestamp, uint _likes);
+    event tweetUnliked(uint _id, address _author, uint _timestamp, uint _likes);
+
     modifier onlyAdmin(){
         require(admin == msg.sender, "You are not the admin");
         _;
@@ -59,13 +63,14 @@ contract twitter{
             content : _tweet
         });
         counter[msg.sender]++;
+        emit tweetCreated(tweets[msg.sender][_id].id, tweets[msg.sender][_id].author, tweets[msg.sender][_id].timestamp, tweets[msg.sender][_id].content);
     }
 
-    function getTweet(address _owner, uint _id) external onlyAuthor(_owner) view returns(string memory){
+    function getTweet(address _owner, uint _id) external view returns(string memory){
         return tweets[_owner][_id].content;
     }
 
-    function getAllTweets(address _owner) external onlyAuthor(_owner) view returns(string[] memory){
+    function getAllTweets(address _owner) external view returns(string[] memory){
         uint _length = counter[_owner];
         //In solidity uninitalised memory arrays should be given a fixed size hence its not working 
         //string[] memory allTweets ;
@@ -81,6 +86,19 @@ contract twitter{
         require(hasLiked[_owner][_id][msg.sender] == false, "Already Liked");
         tweets[_owner][_id].likes ++;
         hasLiked[_owner][_id][msg.sender] = true ;
+
+        emit tweetLiked(tweets[_owner][_id].id, tweets[_owner][_id].author, tweets[_owner][_id].timestamp, tweets[_owner][_id].likes);
+    }
+
+    function unlikeTweet(address _owner, uint _id) external{
+        require(_id < counter[_owner], "Error - no id found");
+        require(hasLiked[_owner][_id][msg.sender], "Already unliked");
+
+        tweets[_owner][_id].likes --;
+        hasLiked[_owner][_id][msg.sender] = false;
+
+        emit tweetUnliked(tweets[_owner][_id].id, tweets[_owner][_id].author, tweets[_owner][_id].timestamp, tweets[_owner][_id].likes);
+
     }
 
     // mapping(address => mapping(uint => string)) public tweets;
